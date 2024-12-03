@@ -1,0 +1,69 @@
+resource "aws_autoscaling_group" "k8s_master_asg" {
+  name = "${var.name}-master-asg"
+  launch_template {
+    id      = aws_launch_template.k8s_master_lc.id
+    version = "$Latest"
+  }
+  min_size            = 3
+  max_size            = 5
+  desired_capacity    = 3
+  vpc_zone_identifier = aws_subnet.public[*].id
+  target_group_arns   = [aws_lb_target_group.k8s_master_tg.arn]
+
+  tag {
+    key                 = "Name"
+    value               = "${var.name}-master-node"
+    propagate_at_launch = true
+  }
+  tag {
+    key                 = "k8s.io/cluster-autoscaler/enabled"
+    value               = "true"
+    propagate_at_launch = true
+  }
+  tag {
+    key                 = "k8s.io/cluster-autoscaler/${var.name}"
+    value               = "owned"
+    propagate_at_launch = true
+  }
+  tag {
+    key                 = "kubernetes.io/cluster/${var.name}"
+    value               = "owned"
+    propagate_at_launch = true
+  }
+  tag {
+    key                 = "k8s.io/cluster-autoscaler/${var.name}/Role"
+    value               = "master"
+    propagate_at_launch = true
+  }
+}
+
+resource "aws_launch_template" "k8s_master_lc" {
+  name          = "${var.name}-master-lc"
+  image_id      = data.aws_ami.debian.id
+  instance_type = var.nodes.instance_type
+
+  key_name = var.nodes.key_name
+
+  network_interfaces {
+    associate_public_ip_address = true
+    security_groups             = [aws_security_group.k8s_master_sg.id]
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  user_data = base64encode(templatefile("${path.module}/k8s_master_user_data.sh", {
+    kubernetes_version         = "1.31.0"
+    kubernetes_install_version = "1.31.0-1.1"
+    containerd_version         = "1.7"
+    cluster_name               = var.name
+    api_dns                    = "${var.dns.controlplane_subdomain}.${var.dns.domain_name}"
+    pod_cidr                   = "192.168.0.0/16"
+    s3_bucket_name             = aws_s3_bucket.k8s_config.id
+  }))
+
+  iam_instance_profile {
+    name = aws_iam_instance_profile.k8s_node_profile.name
+  }
+}
