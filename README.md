@@ -27,8 +27,9 @@ The module is flexible and customizable, so you can tweak it to match your needs
 ### Example usage:
 
 ```hcl
-module "k8s_cluster" {
-  source = "../.."
+module "self-managed-k8s" {
+  source  = "lafayettegabe/self-managed-k8s/aws"
+  version = "1.0.0"
 
   name = "k8s-cluster"
 
