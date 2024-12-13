@@ -33,6 +33,19 @@ module "self-managed-k8s" {
 
   name = "k8s-cluster"
 
+  computing = {
+    masters = {
+      min_size         = 3
+      max_size         = 5
+      desired_capacity = 3
+    }
+    workers = {
+      min_size         = 3
+      max_size         = 5
+      desired_capacity = 3
+    }
+  }
+
   networking = {
     cidr           = "10.0.0.0/16"
     azs            = ["us-east-1a", "us-east-1b", "us-east-1c"]
