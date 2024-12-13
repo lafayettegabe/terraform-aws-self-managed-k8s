@@ -3,6 +3,22 @@ variable "name" {
   type        = string
 }
 
+variable "computing" {
+  description = "Master and Worker nodes"
+  type = object({
+    masters = object({
+      desired_capacity = number
+      min_size         = number
+      max_size         = number
+    })
+    workers = object({
+      desired_capacity = number
+      min_size         = number
+      max_size         = number
+    })
+  })
+}
+
 variable "dns" {
   description = "DNS configuration"
   type = object({
