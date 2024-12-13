@@ -4,9 +4,9 @@ resource "aws_autoscaling_group" "k8s_master_asg" {
     id      = aws_launch_template.k8s_master_lc.id
     version = "$Latest"
   }
-  min_size            = 3
-  max_size            = 5
-  desired_capacity    = 3
+  min_size            = var.computing.masters.min_size
+  max_size            = var.computing.masters.max_size
+  desired_capacity    = var.computing.masters.desired_capacity
   vpc_zone_identifier = aws_subnet.public[*].id
   target_group_arns   = [aws_lb_target_group.k8s_master_tg.arn]
 

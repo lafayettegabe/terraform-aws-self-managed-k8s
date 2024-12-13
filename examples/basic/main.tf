@@ -3,6 +3,20 @@ module "k8s_cluster" {
 
   name = local.project
 
+  computing = {
+    masters = {
+      min_size         = 3
+      max_size         = 5
+      desired_capacity = 3
+    }
+    workers = {
+      min_size         = 3
+      max_size         = 5
+      desired_capacity = 3
+    }
+
+  }
+
   networking = {
     cidr           = local.vpc_cidr
     azs            = local.azs

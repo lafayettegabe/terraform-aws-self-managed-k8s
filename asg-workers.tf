@@ -10,9 +10,9 @@ resource "aws_autoscaling_group" "k8s_worker_asg" {
     aws_lb_target_group.k8s_ingress_https.arn
   ]
 
-  min_size            = 2
-  max_size            = 5
-  desired_capacity    = 2
+  min_size            = var.computing.workers.min_size
+  max_size            = var.computing.workers.max_size
+  desired_capacity    = var.computing.workers.desired_capacity
   vpc_zone_identifier = aws_subnet.public[*].id
 
   tag {
