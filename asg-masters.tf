@@ -7,10 +7,6 @@ resource "aws_instance" "k8s_master" {
   security_groups             = [aws_security_group.k8s_master_sg.id]
   iam_instance_profile        = aws_iam_instance_profile.k8s_node_profile.name
 
-  lifecycle {
-    prevent_destroy = true
-  }
-
   user_data = base64encode(templatefile("${path.module}/k8s_master_user_data.sh", {
     ami_architecture           = var.ami_architecture
     kubernetes_version         = var.versions.kubernetes_version

@@ -41,10 +41,6 @@ resource "aws_launch_template" "k8s_worker_lc" {
     security_groups             = [aws_security_group.k8s_worker_sg.id]
   }
 
-  lifecycle {
-    create_before_destroy = true
-  }
-
   user_data = base64encode(templatefile("${path.module}/k8s_worker_user_data.sh", {
     ami_architecture           = var.ami_architecture
     kubernetes_version         = var.versions.kubernetes_version
