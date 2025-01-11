@@ -1,11 +1,15 @@
 resource "aws_instance" "k8s_master" {
-  ami           = data.aws_ami.debian.id
-  instance_type = var.computing.workers.instance_type
-  key_name      = var.computing.key_name
-  subnet_id     = aws_subnet.public[0].id
-
+  ami                         = data.aws_ami.debian.id
+  instance_type               = var.computing.workers.instance_type
+  key_name                    = var.computing.key_name
+  subnet_id                   = aws_subnet.public[0].id
   associate_public_ip_address = true
   security_groups             = [aws_security_group.k8s_master_sg.id]
+  iam_instance_profile        = aws_iam_instance_profile.k8s_node_profile.name
+
+  lifecycle {
+    prevent_destroy = true
+  }
 
   user_data = base64encode(templatefile("${path.module}/k8s_master_user_data.sh", {
     kubernetes_version         = var.versions.kubernetes_version
@@ -17,10 +21,14 @@ resource "aws_instance" "k8s_master" {
     s3_bucket_name             = aws_s3_bucket.k8s_config.id
   }))
 
+  root_block_device {
+    volume_size           = 10
+    volume_type           = "gp3"
+    delete_on_termination = true
+  }
+
   tags = {
     Name                                = "${var.name}-master-node"
     "kubernetes.io/cluster/${var.name}" = "owned"
   }
-
-  iam_instance_profile = aws_iam_instance_profile.k8s_node_profile.name
 }

@@ -29,32 +29,27 @@ The module is flexible and customizable, so you can tweak it to match your needs
 ```hcl
 module "self-managed-k8s" {
   source  = "lafayettegabe/self-managed-k8s/aws"
-  version = "1.0.0"
+  version = "2.0.0"
 
   name = "k8s-cluster"
 
   computing = {
     masters = {
-      min_size         = 3
-      max_size         = 5
-      desired_capacity = 3
+      instance_type = "t4g.medium"
     }
     workers = {
-      min_size         = 3
+      instance_type    = "t4g.nano"
+      min_size         = 2
       max_size         = 5
-      desired_capacity = 3
+      desired_capacity = 2
     }
+    key_name = aws_key_pair.example.key_name
   }
 
   networking = {
     cidr           = "10.0.0.0/16"
-    azs            = ["us-east-1a", "us-east-1b", "us-east-1c"]
     public_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  }
-
-  nodes = {
-    instance_type = "t3.medium"
-    key_name      = aws_key_pair.example.key_name # see examples
+    azs            = ["us-east-1a", "us-east-1b", "us-east-1c"]
   }
 
   dns = {
@@ -62,7 +57,7 @@ module "self-managed-k8s" {
     controlplane_subdomain = "k8s"
     ingress_subdomain      = "app"
   }
-
   tags = local.common_tags
+
 }
 ```

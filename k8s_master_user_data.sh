@@ -102,6 +102,9 @@ chown $(id -u):$(id -g) /root/.kube/config
 # Deploy the network plugin (Kube-router)
 kubectl apply -f https://raw.githubusercontent.com/cloudnativelabs/kube-router/master/daemonset/kubeadm-kuberouter.yaml
 
+# Deploy the AWS EFS plugin (for PVs)
+kubectl apply -k github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/ecr/eks/
+
 # Save admin kubeconfig to S3 for later use
 aws s3 cp /etc/kubernetes/admin.conf s3://${s3_bucket_name}/config
 
