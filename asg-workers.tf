@@ -46,6 +46,7 @@ resource "aws_launch_template" "k8s_worker_lc" {
   }
 
   user_data = base64encode(templatefile("${path.module}/k8s_worker_user_data.sh", {
+    ami_architecture           = var.ami_architecture
     kubernetes_version         = var.versions.kubernetes_version
     kubernetes_install_version = var.versions.kubernetes_install_version
     containerd_version         = var.versions.containerd_version

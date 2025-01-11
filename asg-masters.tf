@@ -12,6 +12,7 @@ resource "aws_instance" "k8s_master" {
   }
 
   user_data = base64encode(templatefile("${path.module}/k8s_master_user_data.sh", {
+    ami_architecture           = var.ami_architecture
     kubernetes_version         = var.versions.kubernetes_version
     kubernetes_install_version = var.versions.kubernetes_install_version
     containerd_version         = var.versions.containerd_version

@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+AMI_ARCHITECTURE="${ami_architecture}"
 KUBERNETES_VERSION="${kubernetes_version}"
 KUBERNETES_INSTALL_VERSION="${kubernetes_install_version}"
 CONTAINERD_VERSION="${containerd_version}"
@@ -17,7 +18,13 @@ apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release jq
 
 # Add Docker repository and install Docker
 curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list >/dev/null
+if [ "$AMI_ARCHITECTURE" == "arm" ]; then
+  echo "Using ARM64 architecture for Docker"
+  echo "deb [arch=arm64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list >/dev/null
+else
+  echo "Using AMD64 architecture for Docker"
+  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list >/dev/null
+fi
 
 # Add Kubernetes repository
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | gpg --dearmor -o /usr/share/keyrings/kubernetes-archive-keyring.gpg
