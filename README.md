@@ -1,60 +1,62 @@
 # Self-Managed Kubernetes Module
 
-This Terraform module makes it super easy to spin up a Kubernetes cluster on AWS.
+This Terraform module makes it easy to deploy a Kubernetes cluster on AWS.
 
-It takes care of all the heavy lifting by provisioning the essential infrastructure components you need to run Kubernetes, such as:
+It automates the creation of essential infrastructure components required for running Kubernetes, such as:
 
-- Auto Scaling Groups for master and worker nodes
+- Auto Scaling Groups (ASGs) for worker nodes
 - VPC, subnets, and route tables for networking
-- Security groups customized for Kubernetes communication
+- Security groups tailored for Kubernetes communication
 - IAM roles and policies for smooth operations
-- An S3 bucket to store cluster state and config
+- An S3 bucket for storing cluster state and configuration
 - Elastic Load Balancers for control plane and ingress traffic
-- DNS settings for cluster endpoints
+- DNS settings for Kubernetes cluster endpoints
 
-The module is flexible and customizable, so you can tweak it to match your needs while sticking to AWS best practices for security and scalability.
+The module is flexible and customizable, enabling you to adjust it to fit your needs while adhering to AWS best practices for security and scalability.
 
-## What You Get
+## Features
 
-- Fully automated setup: Deploy your Kubernetes cluster with minimal effort.
-- Modular structure: Use only the pieces you need or extend them as you like.
-- Flexible configurations: Choose instance types, sizes, and scaling policies that fit your workload.
-- Optimized security: IAM roles and security groups are pre-configured for Kubernetes best practices.
-- Ready-to-use nodes: Pre-configured user data scripts for master and worker nodes, so your cluster is up and running as soon as it’s deployed.
-- ~~Support for private clusters with advanced networking options~~ (TODO: Evaluate implementing private ASG with NLB or NGINX Load Balancer. While this setup can offer additional security and scalability, it is unnecessary for small to medium clusters. Public ASGs, as configured, are already effectively private due to strict access controls such as limited ports, SSH keys, and security groups, making the added complexity and cost of a fully private setup unnecessary in most cases.)
+- **Fully Automated Setup**: Deploy your Kubernetes cluster with minimal effort.
+- **Modular Architecture**: Use only the components you need or extend them as desired.
+- **Customizable Configurations**: Choose instance types, sizes, and scaling policies that suit your workload.
+- **Optimized Security**: IAM roles and security groups are pre-configured with Kubernetes best practices in mind.
+- **Ready-to-Use Nodes**: Pre-configured user data scripts for master and worker nodes, allowing your cluster to be operational immediately after deployment.
+- ~~**Support for Private Clusters with Advanced Networking Options**~~  
+  (TODO: Evaluate implementing private ASG with NLB or NGINX Load Balancer. Although this setup may provide additional security and scalability, it is not necessary for small to medium-sized clusters. Public ASGs, as configured, already offer sufficient security due to strict access controls like limited ports, SSH keys, and security groups. Thus, the complexity and cost of a fully private setup may be unnecessary in most cases.)
 
+## Prerequisites
 
-### Example usage:
+- Terraform
+- AWS account and credentials
+- An existing SSH key pair for EC2 instances
+- S3 bucket for cluster state and configuration (optional)
+
+## Usage Example
 
 ```hcl
 module "self-managed-k8s" {
   source  = "lafayettegabe/self-managed-k8s/aws"
-  version = "1.0.0"
+  version = "2.0.0"
 
   name = "k8s-cluster"
 
   computing = {
     masters = {
-      min_size         = 3
-      max_size         = 5
-      desired_capacity = 3
+      instance_type = "t4g.medium"
     }
     workers = {
-      min_size         = 3
+      instance_type    = "t4g.nano"
+      min_size         = 2
       max_size         = 5
-      desired_capacity = 3
+      desired_capacity = 2
     }
+    key_name = aws_key_pair.example.key_name
   }
 
   networking = {
     cidr           = "10.0.0.0/16"
-    azs            = ["us-east-1a", "us-east-1b", "us-east-1c"]
     public_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  }
-
-  nodes = {
-    instance_type = "t3.medium"
-    key_name      = aws_key_pair.example.key_name # see examples
+    azs            = ["us-east-1a", "us-east-1b", "us-east-1c"]
   }
 
   dns = {
@@ -63,6 +65,10 @@ module "self-managed-k8s" {
     ingress_subdomain      = "app"
   }
 
-  tags = local.common_tags
+  tags = {
+    Project     = "k8s-cluster"
+    Terraform   = "true"
+    Environment = "prod"
+  }
 }
 ```
