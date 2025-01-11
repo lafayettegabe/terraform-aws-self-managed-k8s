@@ -31,7 +31,7 @@ resource "aws_autoscaling_group" "k8s_worker_asg" {
 
 resource "aws_launch_template" "k8s_worker_lc" {
   name          = "${var.name}-worker-lc"
-  image_id      = data.aws_ami.debian.id
+  image_id      = var.ami_architecture == "arm" ? data.aws_ami.debian_arm.id : data.aws_ami.debian_x86.id
   instance_type = var.computing.workers.instance_type
 
   key_name = var.computing.key_name

@@ -40,6 +40,7 @@ module "self-managed-k8s" {
 
   name = "k8s-cluster"
 
+  ami_architecture = "arm" # Only needed if using an ARM-Based AMI
   computing = {
     masters = {
       instance_type = "t4g.medium"

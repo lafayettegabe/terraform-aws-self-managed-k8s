@@ -3,6 +3,11 @@ variable "name" {
   type        = string
 }
 
+variable "ami_architecture" {
+  type    = string
+  default = "x86"
+}
+
 variable "computing" {
   description = "Master and Worker nodes"
   type = object({
