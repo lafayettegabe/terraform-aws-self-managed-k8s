@@ -6,12 +6,11 @@ resource "aws_route53_record" "k8s_api" {
   zone_id = data.aws_route53_zone.selected.zone_id
   name    = "${var.dns.controlplane_subdomain}.${var.dns.domain_name}"
   type    = "A"
+  ttl     = 300
 
-  alias {
-    name                   = aws_lb.k8s_master_lb.dns_name
-    zone_id                = aws_lb.k8s_master_lb.zone_id
-    evaluate_target_health = true
-  }
+  records = [
+    aws_instance.k8s_master.public_ip
+  ]
 }
 
 resource "aws_route53_record" "k8s_ingress" {

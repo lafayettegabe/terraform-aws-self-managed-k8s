@@ -7,10 +7,7 @@ variable "computing" {
   description = "Master and Worker nodes"
   type = object({
     masters = object({
-      instance_type    = string
-      desired_capacity = number
-      min_size         = number
-      max_size         = number
+      instance_type = string
     })
     workers = object({
       instance_type    = string

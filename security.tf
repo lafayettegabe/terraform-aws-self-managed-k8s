@@ -2,12 +2,12 @@ resource "aws_security_group" "k8s_master_sg" {
   vpc_id = aws_vpc.main.id
 
   # # SSH (for debugging)
-  # ingress {
-  #   from_port   = 22
-  #   to_port     = 22
-  #   protocol    = "tcp"
-  #   cidr_blocks = ["0.0.0.0/0"]
-  # }
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   # API Server
   ingress {
@@ -15,22 +15,6 @@ resource "aws_security_group" "k8s_master_sg" {
     to_port     = 6443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # etcd
-  ingress {
-    from_port   = 2379
-    to_port     = 2380
-    protocol    = "tcp"
-    cidr_blocks = [aws_vpc.main.cidr_block]
-  }
-
-  # Kubelet
-  ingress {
-    from_port   = 10250
-    to_port     = 10250
-    protocol    = "tcp"
-    cidr_blocks = [aws_vpc.main.cidr_block]
   }
 
   egress {
@@ -48,13 +32,13 @@ resource "aws_security_group" "k8s_master_sg" {
 resource "aws_security_group" "k8s_worker_sg" {
   vpc_id = aws_vpc.main.id
 
-  # # SSH (for debugging)
-  # ingress {
-  #   from_port   = 22
-  #   to_port     = 22
-  #   protocol    = "tcp"
-  #   cidr_blocks = ["0.0.0.0/0"]
-  # }
+  # SSH (for debugging)
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   # Kubelet
   ingress {
