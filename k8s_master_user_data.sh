@@ -112,4 +112,29 @@ kubectl apply -f https://raw.githubusercontent.com/cloudnativelabs/kube-router/m
 # Save admin kubeconfig to S3 for later use
 aws s3 cp /etc/kubernetes/admin.conf s3://${s3_bucket_name}/config
 
+# ==============================================================================================
+# =====================================   INSTALL HELM AND EFS =================================
+# ==============================================================================================
+
+# Install Helm
+curl https://baltocdn.com/helm/signing.asc | gpg --dearmor -o /usr/share/keyrings/helm-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/helm-keyring.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
+apt-get update
+apt-get install -y helm
+
+# Add the aws-efs-csi-driver Helm repository
+helm repo add aws-efs-csi-driver https://kubernetes-sigs.github.io/aws-efs-csi-driver/
+helm repo update
+
+# Install/upgrade the AWS EFS CSI Driver
+helm upgrade --install aws-efs-csi-driver aws-efs-csi-driver/aws-efs-csi-driver \
+  --namespace kube-system \
+  --set image.region=$REGION
+
+echo "AWS EFS CSI Driver installed successfully."
+
+# ==============================================================================================
+# =====================================   COMPLETION ===========================================
+# ==============================================================================================
+
 echo "Kubernetes master setup is complete. Worker nodes can join using the script from S3."
