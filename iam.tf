@@ -69,7 +69,7 @@ resource "aws_iam_role_policy" "k8s_node_additional_policy" {
           "elasticfilesystem:*",
         ]
         Resource = [
-          aws_efs_file_system.k8s_efs.arn
+          "elasticfilesystem:*"
         ]
       }
     ]
