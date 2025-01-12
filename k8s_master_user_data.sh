@@ -7,6 +7,7 @@ KUBERNETES_INSTALL_VERSION="${kubernetes_install_version}"
 CONTAINERD_VERSION="${containerd_version}"
 POD_CIDR="${pod_cidr}"
 CLUSTER_NAME="${cluster_name}"
+EFS_ID="${efs_id}"
 
 # ==============================================================================================
 # =====================================   CONFIGURING  =========================================
@@ -108,6 +109,9 @@ chown $(id -u):$(id -g) /root/.kube/config
 
 # Deploy the network plugin (Kube-router)
 kubectl apply -f https://raw.githubusercontent.com/cloudnativelabs/kube-router/master/daemonset/kubeadm-kuberouter.yaml
+
+# Save EFS ID as ConfigMap
+kubectl create configmap efs-config --from-literal=efs-id=${efs_id}
 
 # Save admin kubeconfig to S3 for later use
 aws s3 cp /etc/kubernetes/admin.conf s3://${s3_bucket_name}/config

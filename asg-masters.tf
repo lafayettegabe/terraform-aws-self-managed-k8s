@@ -15,6 +15,7 @@ resource "aws_instance" "k8s_master" {
     cluster_name               = var.name
     api_dns                    = "${var.dns.controlplane_subdomain}.${var.dns.domain_name}"
     pod_cidr                   = "192.168.0.0/16"
+    efs_id                     = aws_efs_file_system.k8s_efs.id
     s3_bucket_name             = aws_s3_bucket.k8s_config.id
   }))
 
