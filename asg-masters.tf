@@ -1,6 +1,6 @@
 resource "aws_instance" "k8s_master" {
   ami                         = var.ami_architecture == "arm" ? data.aws_ami.debian_arm.id : data.aws_ami.debian_x86.id
-  instance_type               = var.computing.workers.instance_type
+  instance_type               = var.computing.masters.instance_type
   key_name                    = var.computing.key_name
   subnet_id                   = aws_subnet.public[0].id
   associate_public_ip_address = true
