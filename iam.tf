@@ -56,13 +56,20 @@ resource "aws_iam_role_policy" "k8s_node_additional_policy" {
       {
         Effect = "Allow"
         Action = [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:ListBucket"
+          "s3:*"
         ]
         Resource = [
           aws_s3_bucket.k8s_config.arn,
           "${aws_s3_bucket.k8s_config.arn}/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "elasticfilesystem:*",
+        ]
+        Resource = [
+          aws_efs_file_system.k8s_efs.arn
         ]
       }
     ]
