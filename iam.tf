@@ -68,9 +68,7 @@ resource "aws_iam_role_policy" "k8s_node_additional_policy" {
         Action = [
           "elasticfilesystem:*",
         ]
-        Resource = [
-          "elasticfilesystem:*"
-        ]
+        Resource = "*"
       }
     ]
   })
