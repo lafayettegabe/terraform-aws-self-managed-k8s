@@ -12,7 +12,7 @@ CONTAINERD_VERSION="${containerd_version}"
 
 # Update and install required packages
 apt-get update
-apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release jq awscli
+apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release jq awscli git
 
 # Add Docker repository and install Docker
 curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg

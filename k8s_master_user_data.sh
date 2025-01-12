@@ -14,7 +14,7 @@ CLUSTER_NAME="${cluster_name}"
 
 # Update and install required packages
 apt-get update
-apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release jq awscli ipset cron
+apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release jq awscli ipset cron git
 
 # Add Docker repository and install Docker
 curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
